@@ -1,0 +1,6 @@
+F:\Github\Light\trunk\Light\HttpServer\bin\Debug\HttpServer.exe.config
+F:\Github\Light\trunk\Light\HttpServer\obj\Debug\HttpServer.csprojResolveAssemblyReference.cache
+F:\Github\Light\trunk\Light\HttpServer\bin\Debug\HttpServer.exe
+F:\Github\Light\trunk\Light\HttpServer\bin\Debug\HttpServer.pdb
+F:\Github\Light\trunk\Light\HttpServer\obj\Debug\HttpServer.exe
+F:\Github\Light\trunk\Light\HttpServer\obj\Debug\HttpServer.pdb
