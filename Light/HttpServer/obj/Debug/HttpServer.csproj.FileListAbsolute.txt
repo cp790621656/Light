@@ -4,3 +4,9 @@ F:\Github\Light\trunk\Light\HttpServer\bin\Debug\HttpServer.exe
 F:\Github\Light\trunk\Light\HttpServer\bin\Debug\HttpServer.pdb
 F:\Github\Light\trunk\Light\HttpServer\obj\Debug\HttpServer.exe
 F:\Github\Light\trunk\Light\HttpServer\obj\Debug\HttpServer.pdb
+E:\Github\Light\Light\HttpServer\bin\Debug\HttpServer.exe.config
+E:\Github\Light\Light\HttpServer\obj\Debug\HttpServer.exe
+E:\Github\Light\Light\HttpServer\obj\Debug\HttpServer.pdb
+E:\Github\Light\Light\HttpServer\bin\Debug\HttpServer.exe
+E:\Github\Light\Light\HttpServer\bin\Debug\HttpServer.pdb
+E:\Github\Light\Light\HttpServer\obj\Debug\HttpServer.csprojResolveAssemblyReference.cache

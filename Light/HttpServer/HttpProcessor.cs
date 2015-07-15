@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
@@ -52,62 +51,12 @@ namespace HttpServer
                 //分别处理Get 和 Post 请求;
                 if(m_HttpMethod.Equals("GET"))
                 {
-                    m_HttpServer.HandleGetRequest(this);
+                    HandleGetRequest();
                 }
                 else if(m_HttpMethod.Equals("POST"))
                 {
-                    Console.WriteLine("Process Post data Start");
-                    int contentLen = 0;
-                    MemoryStream ms = new MemoryStream();
-
-                    //是否包含 长度信息;
-                    if(m_HttpHeadersTable.ContainsKey("Content-Length"))
-                    {
-                        contentLen = Convert.ToInt32(m_HttpHeadersTable["Content-Length"]);
-
-                        //如果Post过来的数据太多，就报异常……;
-                        if(contentLen>MAX_POST_SIZE)
-                        {
-                            throw new Exception(string.Format("Post Content-Length{0} too big for LightHttpServer", contentLen));
-                        }
-
-                        //如果Post数据OK，就接收;
-                        byte[] buf = new byte[4096];
-                        int toread = contentLen;
-                        while(toread>0)
-                        {
-                            Console.WriteLine("start read post data,toread={0}", toread);
-
-                            int numread = m_InputStream.Read(buf, 0, Math.Min(4096, toread));
-
-                            Console.WriteLine("read finish,numread={0}", numread);
-
-                            if(numread==0)
-                            {
-                                if(toread==0)
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    throw new Exception("client disconnected during post");
-                                }
-                            }
-
-                            toread -= numread;
-                            ms.Write(buf, 0, numread);
-                        }
-
-                        ms.Seek(0, SeekOrigin.Begin);
-                    }
-
-                    Console.WriteLine("get post data end");
-
-                    //传给HttpServer实例来处理逻辑;
-                    m_HttpServer.HandlePostRequest(this, new StreamReader(ms));   
+                    HandlePostRequest();  
                 }
-
-
             }
             catch(Exception ex)
             {
@@ -137,6 +86,8 @@ namespace HttpServer
             m_HttpMethod = httpHeads[0].ToUpper();
             m_HttpUrl = httpHeads[1];
             m_HttpProtocalVersion = httpHeads[2];
+
+            Console.WriteLine("starting: " + request);
         }
 
         /// <summary>
@@ -144,8 +95,10 @@ namespace HttpServer
         /// </summary>
         public void ParseHeaders()
         {
+            Console.WriteLine("ParseHeaders()");
+
             string line = string.Empty;
-            while ((line == StreamReadLine(m_InputStream)) != null)
+            while ((line = StreamReadLine(m_InputStream)) != null)
             {
                 if (line.Equals(""))
                 {
@@ -171,6 +124,72 @@ namespace HttpServer
             }
         }
 
+
+        /// <summary>
+        /// 处理Get请求;
+        /// </summary>
+        public void HandleGetRequest()
+        {
+            m_HttpServer.HandleGetRequest(this);
+        }
+
+        /// <summary>
+        /// 处理Post请求;
+        /// </summary>
+        public void HandlePostRequest()
+        {
+            Console.WriteLine("Process Post data Start");
+            int contentLen = 0;
+            MemoryStream ms = new MemoryStream();
+
+            //是否包含 长度信息;
+            if (m_HttpHeadersTable.ContainsKey("Content-Length"))
+            {
+                contentLen = Convert.ToInt32(m_HttpHeadersTable["Content-Length"]);
+
+                //如果Post过来的数据太多，就报异常……;
+                if (contentLen > MAX_POST_SIZE)
+                {
+                    throw new Exception(string.Format("Post Content-Length{0} too big for LightHttpServer", contentLen));
+                }
+
+                //如果Post数据OK，就接收;
+                byte[] buf = new byte[4096];
+                int toread = contentLen;
+                while (toread > 0)
+                {
+                    Console.WriteLine("start read post data,toread={0}", toread);
+
+                    int numread = m_InputStream.Read(buf, 0, Math.Min(4096, toread));
+
+                    Console.WriteLine("read finish,numread={0}", numread);
+
+                    if (numread == 0)
+                    {
+                        if (toread == 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            throw new Exception("client disconnected during post");
+                        }
+                    }
+
+                    toread -= numread;
+                    ms.Write(buf, 0, numread);
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+            }
+
+            Console.WriteLine("get post data end");
+
+            //传给HttpServer实例来处理逻辑;
+            m_HttpServer.HandlePostRequest(this, new StreamReader(ms)); 
+        }
+
+
         /// <summary>
         /// 读取一行;
         /// </summary>
@@ -187,7 +206,7 @@ namespace HttpServer
                 {
                     break;
                 }
-                if(nextChar=='\n')
+                if(nextChar=='\r')
                 {
                     continue;
                 }
